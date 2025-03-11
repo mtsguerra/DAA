@@ -1,12 +1,18 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 class exA {
 
     private static final Scanner input = new Scanner(System.in);
 
+    /**
+     * This problem revolves around trying to find closed cycles in the graph and return them, as well as
+     * the number of people that do not belong in any group.
+     * This method works as helper to find the cycles in the graph.
+     * @param start Starting node.
+     * @param a The array to be checked.
+     * @param visited Boolean array to keep track of the visited nodes.
+     * @return The cycle found in the array, if found.
+     */
     private static List<Integer> findCycle (int start, int[] a, boolean[] visited){
         List<Integer> cycle = new ArrayList<>();
         int current = start;
@@ -14,9 +20,11 @@ class exA {
             visited[current] = true;
             cycle.add(current);
             current = a[current];
+            // closes the cycle
             if (current == start){
                 return cycle;
             }
+            // creates a newCycle to readjust the current cycle if necessary
             if (visited[current] && cycle.contains(current)){
                 List<Integer> newCycle = new ArrayList<>();
                 int temp = current;
@@ -27,6 +35,7 @@ class exA {
                 return newCycle;
             }
         }
+        // not found a cycle
         List<Integer> cycleNot = new ArrayList<>();
         cycleNot.add(start);
         return cycleNot;
@@ -76,6 +85,6 @@ class exA {
             }
             System.out.println();
         }
-        System.out.println(n-inGroup);
+        System.out.println(n- inGroup);
     }
 }
