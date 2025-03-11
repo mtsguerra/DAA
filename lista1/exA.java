@@ -37,7 +37,7 @@ class exA {
         int n = input.nextInt();
         input.nextLine();
         int[] a  = new int[n+1];
-        int notInGroup = 0;
+        int inGroup = 0;
 
         for (int i=1;i<=n;i++){
             a[i] = input.nextInt();
@@ -50,10 +50,9 @@ class exA {
         for (int i=1;i<=n;i++){
             if (!visited[i]){
                 List<Integer> group = findCycle(i,a,visited);
-                if (group.size() >= 2){
+                if (group.size() >= 3){
                     groups.add(group);
                 }
-                else notInGroup++;
             }
         }
         if (groups.isEmpty()){
@@ -64,6 +63,7 @@ class exA {
 
         for (List<Integer> g : groups){
             System.out.print(g.size()+" ");
+            inGroup+=g.size();
             int maxIndex = g.indexOf(Collections.max(g));
             for (int i=maxIndex;i<g.size();i++){
                 System.out.print(g.get(i)+" ");
@@ -76,6 +76,6 @@ class exA {
             }
             System.out.println();
         }
-        System.out.println(notInGroup);
+        System.out.println(n-inGroup);
     }
 }
