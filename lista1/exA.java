@@ -44,13 +44,13 @@ class exA {
     public static void main(String[] args) {
 
         int n = input.nextInt();
-        input.nextLine();
+        if (input.hasNext()) input.nextLine();
         int[] a  = new int[n+1];
         int inGroup = 0;
 
         for (int i=1;i<=n;i++){
             a[i] = input.nextInt();
-            input.nextLine();
+            if (input.hasNext()) input.nextLine();
         }
 
         boolean[] visited =  new boolean[n+1];
@@ -60,6 +60,9 @@ class exA {
             if (!visited[i]){
                 List<Integer> group = findCycle(i,a,visited);
                 if (group.size() >= 3){
+                    for (int temp : group){
+                        visited[temp] = true;
+                    }
                     groups.add(group);
                 }
             }
@@ -68,7 +71,6 @@ class exA {
             System.out.println(n);
             return;
         }
-        groups.sort((group1, group2) -> Integer.compare(group1.get(0), group2.get(0)));
 
         for (List<Integer> g : groups){
             System.out.print(g.size()+" ");

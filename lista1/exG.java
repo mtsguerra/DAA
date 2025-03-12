@@ -12,6 +12,8 @@ class exG{
 
         Set<Integer> confirmedNumbers = new HashSet<>();
         Set<Integer> inPosition = new HashSet<>();
+        int totalRights = 0;
+
         List<HashSet<Integer>> setsArray = new ArrayList<>();
         for (int i = 0; i < numberSize; i++) {
             setsArray.add(new HashSet<>());
@@ -38,6 +40,7 @@ class exG{
                 else if (Character.isDigit(currentReview)){
                     confirmedNumbers.add(numNow);
                     inPosition.add(numNow);
+                    if (setsArray.get(j).size()!=1) totalRights++;
                     HashSet<Integer> singleDigit = new HashSet<>();
                     singleDigit.add(currentReview -'0');
                     setsArray.set(j,singleDigit);
@@ -45,11 +48,32 @@ class exG{
             }
         }
 
-        for (int i=0;i<numberSize;i++) {
-            if (confirmedNumbers.size() == numberSize && setsArray.get(i).size()>1) {
+        if (confirmedNumbers.size() == numberSize) {
+            for (int i=0;i<numberSize;i++){
+                setsArray.get(i).removeIf(n->!confirmedNumbers.contains(n));
+                if (setsArray.get(i).size() == 1) continue;
                 setsArray.get(i).removeAll(inPosition);
             }
-            setsArray.get(i).removeIf(n -> !confirmedNumbers.contains(n));
+        }
+
+        else {
+            int[] countOfEach = counts(setsArray);
+            while (true){
+                for (int i=0;i<10;i++) {
+                    int count = countOfEach[i];
+                    int number = i;
+                    if (count == 1){
+                        for (int j=0;j<numberSize;j++){
+                            if (setsArray.get(j).size() > 1 && setsArray.get(j).contains(number)){
+                                setsArray.set(j,new HashSet<>(Set.of(number)));
+                            }
+                        }
+                    }
+                }
+                int[] newCount = counts(setsArray);
+                if (Arrays.equals(countOfEach, newCount)) break;
+                countOfEach = newCount;
+            }
         }
 
         StringBuilder sb = new StringBuilder();
@@ -67,5 +91,16 @@ class exG{
         if (found){
             System.out.println("RESPOSTA " + sb.toString());
         }
+    }
+
+    private static int[] counts (List<HashSet<Integer>> setsArray){
+        int[] countOfEach = new int[10];
+        setsArray.stream().filter(possibles -> possibles.size() > 1).forEach(possibles ->
+        {
+            for (int possible : possibles) {
+                countOfEach[possible]++;
+            }
+        });
+        return countOfEach;
     }
 }
