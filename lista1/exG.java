@@ -12,7 +12,6 @@ class exG{
 
         Set<Integer> confirmedNumbers = new HashSet<>();
         Set<Integer> inPosition = new HashSet<>();
-        int totalRights = 0;
 
         List<HashSet<Integer>> setsArray = new ArrayList<>();
         for (int i = 0; i < numberSize; i++) {
@@ -25,8 +24,8 @@ class exG{
             String numberString = input.nextLine();
             String review = input.nextLine();
             for (int j=0;j<numberSize;j++){
-                char currentReview = review.charAt(j);
                 char currentDigit = numberString.charAt(j);
+                char currentReview = review.charAt(j);
                 int numNow = currentDigit - '0';
                 if (currentReview == 'X'){;
                     for (int k=0;k<numberSize;k++){
@@ -34,15 +33,13 @@ class exG{
                     }
                 }
                 else if (currentReview == '-'){
-                    confirmedNumbers.add(numNow);
                     setsArray.get(j).remove(numNow);
+                    confirmedNumbers.add(numNow);
                 }
                 else if (Character.isDigit(currentReview)){
-                    confirmedNumbers.add(numNow);
-                    inPosition.add(numNow);
-                    if (setsArray.get(j).size()!=1) totalRights++;
                     HashSet<Integer> singleDigit = new HashSet<>();
                     singleDigit.add(currentReview -'0');
+                    inPosition.add(numNow);
                     setsArray.set(j,singleDigit);
                 }
             }
@@ -50,7 +47,7 @@ class exG{
 
         if (confirmedNumbers.size() == numberSize) {
             for (int i=0;i<numberSize;i++){
-                setsArray.get(i).removeIf(n->!confirmedNumbers.contains(n));
+                setsArray.get(i).removeIf(num->!confirmedNumbers.contains(num));
                 if (setsArray.get(i).size() == 1) continue;
                 setsArray.get(i).removeAll(inPosition);
             }
@@ -61,11 +58,13 @@ class exG{
             while (true){
                 for (int i=0;i<10;i++) {
                     int count = countOfEach[i];
-                    int number = i;
-                    if (count == 1){
+                    if (count == 1 && confirmedNumbers.contains(i)) {
+                        confirmedNumbers.remove(i);
                         for (int j=0;j<numberSize;j++){
-                            if (setsArray.get(j).size() > 1 && setsArray.get(j).contains(number)){
-                                setsArray.set(j,new HashSet<>(Set.of(number)));
+                            if (setsArray.get(j).size() > 1 && setsArray.get(j).contains(i)){
+                                HashSet<Integer> singleDigit = new HashSet<>();
+                                singleDigit.add(i);
+                                setsArray.set(j,singleDigit);
                             }
                         }
                     }
@@ -76,6 +75,8 @@ class exG{
             }
         }
 
+
+
         StringBuilder sb = new StringBuilder();
         boolean found = true;
         for (int i=0;i<numberSize;i++){
@@ -83,7 +84,7 @@ class exG{
                 sb.append(setsArray.get(i).iterator().next());
             }
             else {
-                System.out.print("AINDA NAO SEI");
+                System.out.println("AINDA NAO SEI");
                 found = false;
                 break;
             }

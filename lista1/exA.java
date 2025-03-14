@@ -1,6 +1,71 @@
 import java.util.*;
 
+
 class exA {
+
+    private static final Scanner input = new Scanner(System.in);
+
+    public static void main(String[] args) {
+
+        int n = input.nextInt();
+        if (input.hasNext()) input.nextLine();
+        int[] a  = new int[n+1];
+        int inGroup = 0;
+
+        for (int i=1;i<=n;i++){
+            a[i] = input.nextInt();
+            if (input.hasNext()) input.nextLine();
+        }
+
+        boolean[] visited =  new boolean[n+1];
+        List<List<Integer>> groups = new ArrayList<>();
+
+        for (int i=1;i<=n;i++){
+            List<Integer> group = new ArrayList<>();
+            int current = i;
+            while (!visited[current]){
+                visited[current] = true;
+                group.add(current);
+                current = a[current];
+                if (current == i){
+                    break;
+                }
+                if (visited[current]){
+                    group.clear();
+                    break;
+                }
+            }
+            if (group.size() >= 3){
+                groups.add(group);
+            }
+        }
+        if (groups.isEmpty()){
+            System.out.println(n);
+            return;
+        }
+
+        for (List<Integer> g : groups){
+            System.out.print(g.size()+" ");
+            inGroup+=g.size();
+            int maxIndex = g.indexOf(Collections.max(g));
+            for (int i=maxIndex;i<g.size();i++){
+                System.out.print(g.get(i)+" ");
+            }
+            if (maxIndex!=0){
+                for (int i=0;i<maxIndex-1;i++){
+                    System.out.print(g.get(i)+" ");
+                }
+                System.out.print(g.get(maxIndex-1));
+            }
+            System.out.println();
+        }
+        System.out.println(n- inGroup);
+    }
+}
+
+
+/* nsquare complexity
+class exAasdsda {
 
     private static final Scanner input = new Scanner(System.in);
 
@@ -12,7 +77,7 @@ class exA {
      * @param a The array to be checked.
      * @param visited Boolean array to keep track of the visited nodes.
      * @return The cycle found in the array, if found.
-     */
+
     private static List<Integer> findCycle (int start, int[] a, boolean[] visited){
         List<Integer> cycle = new ArrayList<>();
         int current = start;
@@ -89,4 +154,4 @@ class exA {
         }
         System.out.println(n- inGroup);
     }
-}
+}*/
