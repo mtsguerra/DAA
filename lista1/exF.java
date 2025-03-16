@@ -49,10 +49,10 @@ class exF{
         int vTotalTime =0;
 
         for (int i = 0; i<blackoutSubs; i++){
+            int tmp = input.nextInt();
             if (i==blackoutSubs-1){
-                int lastAccepted = input.nextInt();
                 input.nextLine();
-                vTotalTime+=lastAccepted;
+                vTotalTime+=tmp;
                 break;
             }
             vTotalTime+=20*60;
@@ -66,13 +66,10 @@ class exF{
             vTotalTime += problemInfo[1] + 20 * problemInfo[2] * 60;
         }
 
-        int minProblemsSolved = vTotalTime / blackoutStart;
-
-        for (int i=1;i<=numberOfTeams;i++){
+        for (int i=0;i<=numberOfTeams;i++){
             if (!teams.containsKey(i) || i==teamWantsToKnow) continue;
             HashMap<Integer, int[]> current = teams.get(i);
-            if (current.size() < minProblemsSolved) continue;
-            int t = getT(current, delay, minProblemsSolved, blackoutStart);
+            int t = getT(current, delay, blackoutStart);
             if (t < vTotalTime){
                 System.out.println("Nao sabemos");
                 return;
@@ -81,7 +78,7 @@ class exF{
         System.out.println("Vencemos");
     }
 
-    private static int getT(HashMap<Integer, int[]> current, int delay, int minProblemsSolved, int blackoutStart) {
+    private static int getT(HashMap<Integer, int[]> current, int delay, int blackoutStart) {
         int solved =0;
         int totalTime=0;
         int lastSubmissionTime = 0;
@@ -92,9 +89,9 @@ class exF{
         }
         int currentTime = Math.max(lastSubmissionTime+delay, blackoutStart);
         while (solved < 7 && currentTime <= 14400) {
+            solved++;
             totalTime+=currentTime;
             currentTime+=delay;
-            solved++;
         }
         return totalTime;
     }
