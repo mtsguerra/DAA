@@ -78,7 +78,7 @@ class exG{
                     confirmedWithoutInPositionOnes.remove(i);
                     for (int j=0;j<numberSize;j++){
                         // sets the set in this position to only contain this digit
-                        if (setsArray.get(j).size() > 1 && setsArray.get(j).contains(i)){
+                        if (!setsArray.get(j).isEmpty() && setsArray.get(j).contains(i)){
                             HashSet<Integer> singleDigit = new HashSet<>();
                             singleDigit.add(i);
                             setsArray.set(j,singleDigit);
