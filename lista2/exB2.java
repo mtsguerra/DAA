@@ -58,7 +58,6 @@ class exB2{
         while (!queue.isEmpty()) {
             int current = queue.poll();
 
-            // Check if this supermarket has pumpkins
             if (numberOfPumpkins[current-1] > 0) {
                 if (numberOfPumpkins[current-1] > bestSupermarket[1]) {
                     bestSupermarket[0] = current;
@@ -68,7 +67,6 @@ class exB2{
                 }
             }
 
-            // Explore neighbors
             for (Integer neighbor : connections.get(current)) {
                 if (!visited[neighbor]) {
                     visited[neighbor] = true;
