@@ -27,6 +27,8 @@ class exF2{
         }
     }
 
+    // StronglyConnectedComponents SCC
+
     private static HashMap<Integer, HashSet<Integer>> reverseGraph(HashMap<Integer, HashSet<Integer>> original) {
         HashMap<Integer, HashSet<Integer>> result = new HashMap<>();
         for (int i : original.keySet()){
@@ -45,10 +47,14 @@ class exF2{
         // int [groups4+, notInGroups4+]
         int[] resp = new int[2];
         resp[1] = numberOfStudents;
-        int[] visited = new int[numberOfStudents+1];
+        boolean[] visited = new boolean[numberOfStudents+1];
 
+        // remove all students that can not form a connection
         while (true){
-            HashMap<Integer, HashSet<Integer>> og = new HashMap<>(connections);
+            HashMap<Integer, HashSet<Integer>> og = new HashMap<>();
+            for (Map.Entry<Integer, HashSet<Integer>> entry : connections.entrySet()) {
+                og.put(entry.getKey(), new HashSet<>(entry.getValue()));
+            }
             HashSet<Integer> toEliminate = new HashSet<>();
             for (int i=1;i<=numberOfStudents;i++){
                 if (connections.get(i).isEmpty()) toEliminate.add(i);
@@ -61,28 +67,10 @@ class exF2{
 
         HashMap<Integer, HashSet<Integer>> reversed = reverseGraph(connections);
         for (int i=1;i<=numberOfStudents;i++){
-            if (visited[i]==0){
+            if (!visited[i]){
                 HashSet<Integer> group = new HashSet<>();
                 dfs(i,reversed,visited, group, new ArrayList<>());
-                boolean valid = true;
-                for (int j : group){
-                    boolean found = false;
-                    for (int k : connections.get(j)){
-                        if (group.contains(k)){
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found){
-                        for (int k : group){
-                            visited[k] = 0;
-                        }
-                        visited[j] = 1;
-                        valid = false;
-                        break;
-                    }
-                }
-                if (group.size() >= 4 && valid){
+                if (group.size() >= 4){
                     resp[0]++;
                     resp[1] -= group.size();
                 }
@@ -90,19 +78,22 @@ class exF2{
         }
         return resp;
     }
+    // performs the dfs to form a valid group
+    // revolves around in the idea that if in the dfs that is being performed the leaf node
+    // is going to be or a visited node ( forming a cycle ) or a node that is not in the group
     private static void dfs(int start, HashMap<Integer, HashSet<Integer>> reversed,
-                            int[] visited, HashSet<Integer> group, List<Integer> currentGroup){
+                            boolean[] visited, HashSet<Integer> group, List<Integer> currentGroup){
         HashSet<Integer> ways = reversed.get(start);
         if (ways.isEmpty()){
             return;
         }
-        visited[start] = 1;
+        visited[start] = true;
         currentGroup.add(start);
         for (int i : ways){
-            if (visited[i] == 0){
+            if (!visited[i]){
                 dfs(i, reversed,visited, group, currentGroup);
             }
-            else if (visited[i] == 1) {
+            else {
                 group.addAll(currentGroup);
             }
         }
