@@ -27,75 +27,80 @@ class exF2{
         }
     }
 
-    // StronglyConnectedComponents SCC
-
-    private static HashMap<Integer, HashSet<Integer>> reverseGraph(HashMap<Integer, HashSet<Integer>> original) {
-        HashMap<Integer, HashSet<Integer>> result = new HashMap<>();
-        for (int i : original.keySet()){
-            result.put(i,new HashSet<>());
-        }
-        for (int i : original.keySet()){
-            for (int j : original.get(i)){
-                result.get(j).add(i);
+    private static int[] findGroups (int numberOfStudents, HashMap<Integer, HashSet<Integer>> connections){
+        List<HashSet<Integer>> sccs = findStronglyConnectedComponents(numberOfStudents, connections);
+        int largeGroups = 0;
+        int studentsInSmallGroups = 0;
+        for (HashSet<Integer> scc : sccs){
+            if (scc.size() >= 4){
+                largeGroups++;
+            }
+            else{
+                studentsInSmallGroups += scc.size();
             }
         }
-        return result;
+        return new int[] {largeGroups, studentsInSmallGroups};
     }
 
-
-    private static int[] findGroups(int numberOfStudents, HashMap<Integer, HashSet<Integer>> connections){
-        // int [groups4+, notInGroups4+]
-        int[] resp = new int[2];
-        resp[1] = numberOfStudents;
-        boolean[] visited = new boolean[numberOfStudents+1];
-
-        // remove all students that can not form a connection
-        while (true){
-            HashMap<Integer, HashSet<Integer>> og = new HashMap<>();
-            for (Map.Entry<Integer, HashSet<Integer>> entry : connections.entrySet()) {
-                og.put(entry.getKey(), new HashSet<>(entry.getValue()));
-            }
-            HashSet<Integer> toEliminate = new HashSet<>();
-            for (int i=1;i<=numberOfStudents;i++){
-                if (connections.get(i).isEmpty()) toEliminate.add(i);
-            }
-            for (int i : connections.keySet()){
-                connections.get(i).removeAll(toEliminate);
-            }
-            if (og.equals(connections)) break;
-        }
-
-        HashMap<Integer, HashSet<Integer>> reversed = reverseGraph(connections);
+    private static List<HashSet<Integer>> findStronglyConnectedComponents(int numberOfStudents,
+                                                                          HashMap<Integer, HashSet<Integer>> connections){
+        // kosaraju's algorithm
+        Stack<Integer> stack = new Stack<>();
+        boolean visited[] = new boolean[numberOfStudents+1];
         for (int i=1;i<=numberOfStudents;i++){
             if (!visited[i]){
-                HashSet<Integer> group = new HashSet<>();
-                dfs(i,reversed,visited, group, new ArrayList<>());
-                if (group.size() >= 4){
-                    resp[0]++;
-                    resp[1] -= group.size();
-                }
+                dfs(i, connections,visited,stack);
             }
         }
-        return resp;
+        HashMap<Integer, HashSet<Integer>> reversedGraph = reverseGraph(connections);
+        Arrays.fill(visited, false);
+        List<HashSet<Integer>> sccs = new ArrayList<>();
+        while (!stack.isEmpty()){
+            int current = stack.pop();
+            if (!visited[current]){
+                HashSet<Integer> scc = new HashSet<>();
+                dfsSCC(current, reversedGraph, visited, scc);
+                sccs.add(scc);
+            }
+        }
+        return sccs;
     }
-    // performs the dfs to form a valid group
-    // revolves around in the idea that if in the dfs that is being performed the leaf node
-    // is going to be or a visited node ( forming a cycle ) or a node that is not in the group
-    private static void dfs(int start, HashMap<Integer, HashSet<Integer>> reversed,
-                            boolean[] visited, HashSet<Integer> group, List<Integer> currentGroup){
-        HashSet<Integer> ways = reversed.get(start);
-        if (ways.isEmpty()){
-            return;
-        }
-        visited[start] = true;
-        currentGroup.add(start);
-        for (int i : ways){
-            if (!visited[i]){
-                dfs(i, reversed,visited, group, currentGroup);
+
+    private static void dfs(int node, HashMap<Integer, HashSet<Integer>> connections,
+                            boolean[] visited, Stack<Integer> stack) {
+        visited[node] = true;
+        for (int neighbor : connections.get(node)) {
+            if (!visited[neighbor]) {
+                dfs(neighbor, connections, visited, stack);
             }
-            else {
-                group.addAll(currentGroup);
+        }
+        stack.push(node);
+    }
+
+    private static void dfsSCC(int node, HashMap<Integer, HashSet<Integer>> connections,
+                               boolean[] visited, HashSet<Integer> scc) {
+        visited[node] = true;
+        scc.add(node);
+        for (int neighbor : connections.get(node)) {
+            if (!visited[neighbor]) {
+                dfsSCC(neighbor, connections, visited, scc);
             }
         }
     }
+
+    private static HashMap<Integer, HashSet<Integer>> reverseGraph(HashMap<Integer,
+            HashSet<Integer>> connections) {
+
+        HashMap<Integer, HashSet<Integer>> reversed = new HashMap<>();
+        for (int node : connections.keySet()) {
+            reversed.put(node, new HashSet<>());
+        }
+        for (int node : connections.keySet()) {
+            for (int neighbor : connections.get(node)) {
+                reversed.get(neighbor).add(node);
+            }
+        }
+        return reversed;
+    }
+
 }
