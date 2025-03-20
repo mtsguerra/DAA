@@ -8,6 +8,7 @@ class exG2{
         int numberOfNodes = input.nextInt();
         int numberOfActivities = input.nextInt();
         int k = input.nextInt();
+        // time spent to do all the activities
         int totalTime = 0;
 
         int[] nEdges = new int[numberOfNodes+1];
@@ -33,7 +34,6 @@ class exG2{
                                       int [] nEdges, int numberOfActivities, int numberOfNodes,
                                        int totalTime, int k){
         Queue<Integer> queue = new LinkedList<>();
-        int [] topologicalOrderWithTime = new int[numberOfNodes];
         int index =0;
         for (int zz =0;zz<numberOfActivities;zz++){
             for (int i=1;i<=numberOfNodes;i++){
@@ -42,32 +42,23 @@ class exG2{
                     nEdges[i] = -1;
                 }
             }
-            boolean found = false;
-            if (queue.contains(k)){
-                found = true;
-                queue.remove(k);
-            }
+            queue.remove(k);
             while (!queue.isEmpty()){
                 int current = queue.poll();
-                topologicalOrderWithTime[index] = current;
                 index++;
                 for (int[] neighbor : connections.get(current)){
                     nEdges[neighbor[0]]--;
                     totalTime -= neighbor[1];
                 }
             }
-            if (found){
-                int remainingRelations = 0;
-                for (int n : nEdges){
-                    if (n > 0){
-                        remainingRelations+=n;
-                    }
-                }
-                System.out.println(remainingRelations + " " + totalTime);
+        }
+        int remainingRelations = 0;
+        for (int n : nEdges){
+            if (n > 0){
+                remainingRelations+=n;
             }
         }
-        int pp=0;
-        pp+=1;
+        System.out.println(remainingRelations + " " + totalTime);
     }
 
 }
