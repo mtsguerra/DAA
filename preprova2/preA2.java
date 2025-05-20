@@ -7,6 +7,7 @@ public class preA2 {
     public static void main(String[] args) {
         int nNodes = input.nextInt();
         int nConnections = input.nextInt();
+        @SuppressWarnings("unchecked")
         HashSet<Integer> [] connections = new HashSet[nNodes+1];
         for (int i=1;i<=nNodes;i++){
             connections[i] = new HashSet<>();
